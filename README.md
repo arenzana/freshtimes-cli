@@ -19,3 +19,8 @@ ft mcp
 ```
 
 This repo holds releases only; issues and source are not public.
+
+## Agent skill
+
+[`skills/freshtimes`](skills/freshtimes/SKILL.md) teaches an AI agent when and how to use `ft` and the MCP server.
+For Claude Code, copy the folder into `~/.claude/skills/`.
