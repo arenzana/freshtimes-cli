@@ -22,25 +22,25 @@ reliable clock and your memory of trading hours may be out of date. Ask `ft` (or
 ## Install
 
 ```sh
-brew install arenzana/tap/ft          # macOS and Linux; installs `ft` and `freshtimes`
+brew install arenzana/tap/ft          # macOS and Linux; a client of freshtim.es
 ```
 
 Without Homebrew, download the archive for your OS and CPU from
-https://github.com/arenzana/freshtimes-cli/releases and put `freshtimes` on PATH (symlink it as `ft`).
+https://github.com/arenzana/freshtimes-cli/releases and put `ft` on PATH.
 
 Add the MCP server (Claude Code):
 
 ```sh
 claude mcp add --transport http freshtimes https://freshtim.es/mcp      # remote, public tools
-claude mcp add freshtimes -- ft mcp                                     # local stdio
-claude mcp add freshtimes -- ft mcp --config ~/freshtimes-export.json   # local, plus team tools
+claude mcp add freshtimes -- ft mcp                                     # stdio relay to freshtim.es/mcp
+claude mcp add freshtimes -e FT_TOKEN=ft_pat_... -- ft mcp              # plus team tools
 ```
 
 Other MCP clients: `{"mcpServers": {"freshtimes": {"type": "http", "url": "https://freshtim.es/mcp"}}}`.
 
-Team data is personal. It is available either from a Settings > Export file (local `ft mcp --config`,
-`ft who --config`) or, for signed-in users, with a personal access token made in Settings
-(`Authorization: Bearer ft_pat_...` on the remote MCP or `GET /api/v1/team/availability`).
+Team data is personal. It needs a personal access token made in Settings by a signed-in user
+(`FT_TOKEN` / `--token` for `ft`, `Authorization: Bearer ft_pat_...` on the remote MCP or
+`GET /api/v1/team/availability`). `ft who --config` also reads a Settings > Export file.
 Never print or commit a token or an export file.
 
 ## CLI
@@ -53,10 +53,11 @@ ft events --hours 36 nyse tse                 # opens, closes, auctions, breaks,
 ft window lse nyse --zone Madrid              # when both are open today, in Madrid time
 ft window --any --extended lse nyse --date 2026-12-24
 ft convert 2026-11-05T15:00 --from Madrid "New York" Sydney
-ft who --config ~/freshtimes-export.json --team Ops
+ft who --team Ops                             # needs FT_TOKEN (or --config export.json)
 ```
 
-Add `--json` for machine-readable output. Places can be IANA zones (`Europe/Madrid`) or city names;
+Add `--json` for machine-readable output. Don't run bare `ft` or `ft board` from an agent: that is the
+interactive board for people (without a terminal it only prints help). Places can be IANA zones (`Europe/Madrid`) or city names;
 add a country code to disambiguate (`"Portland, US"`). Market ids come from `ft markets` or the
 `list_markets` tool (for example `nyse`, `lse`, `cme-globex`, `eurex`, `tse`, `hkex`).
 
@@ -72,7 +73,7 @@ add a country code to disambiguate (`"Portland, US"`). Market ids come from `ft 
 | `convert_time` | a local time in one place, in others (DST-aware) |
 | `public_holidays` | public and bank holidays for `CC` or `CC-SUBDIV` (e.g. `ES-MD`, `US-NY`) |
 | `find_city` | a city's time zone, coordinates and holiday region |
-| `team_availability` | with team data only: who is working, off, asleep, on holiday, and next start |
+| `team_availability` | with a token only: who is working, off, asleep, on holiday, and next start |
 
 ## Reading the answers
 
